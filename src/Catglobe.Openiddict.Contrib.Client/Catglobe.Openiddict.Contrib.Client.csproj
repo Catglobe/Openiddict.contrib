@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetFrameworkTargetFrameworks);$(NetCoreTargetFrameworks)</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Helpers for OpenIddict aspnetcore clients.</Description>
+    <PackageTags>$(PackageTags);client;aspnetcore</PackageTags>
+    <RootNamespace>Openiddict.Contrib.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenIddict.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0')) ">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))) Or&#xD;&#xA;                ('$(TargetFrameworkIdentifier)' == '.NETFramework') Or&#xD;&#xA;                ('$(TargetFrameworkIdentifier)' == '.NETStandard') ">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\OpenIddict.Extensions\*\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.AspNetCore.Authentication" />
+    <Using Include="Microsoft.AspNetCore.Http" />
+    <Using Include="OpenIddict.Abstractions" />
+    <Using Include="OpenIddict.Abstractions.OpenIddictConstants" Static="true" />
+    <Using Include="OpenIddict.Abstractions.OpenIddictResources" Alias="SR" />
+    <Using Include="OpenIddict.Client.OpenIddictClientEvents" Static="true" />
+    <Using Include="OpenIddict.Client.OpenIddictClientHandlers" Static="true" />
+    <Using Include="OpenIddict.Client.OpenIddictClientHandlerFilters" Static="true" />
+    <Using Include="OpenIddict.Client.AspNetCore.OpenIddictClientAspNetCoreHandlers" Static="true" />
+    <Using Include="OpenIddict.Client.AspNetCore.OpenIddictClientAspNetCoreHandlerFilters" Static="true" />
+  </ItemGroup>
+	
+</Project>
