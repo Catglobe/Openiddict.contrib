@@ -1,0 +1,105 @@
+<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <NoWarn>$(NoWarn);CS1591;NU5118;NU5128</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <CodeAnalysisRuleset>$(MSBuildThisFileDirectory)eng\CodeAnalysis.ruleset</CodeAnalysisRuleset>
+    <EnableXlfLocalization>false</EnableXlfLocalization>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StrongNameKeyId>OpenIddict.contrib.Pruning.BackgroundService</StrongNameKeyId>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)eng\key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+	<PublicSign>false</PublicSign>
+	<PublicKey>0024000004800000940000000602000000240000525341310004000001000100c584821b0b1097b0829c64856f6a64574a7017f11fce2e7a2c727abca39f973d8602ebb4283d1fe454de079e6bea515e77cee702f49ddf6272be395b94790805b1e3870916334195f4708210edd16232e70080a79fbd4c848191a20083e43709d76f03e2390b5a123c14e12797b67bf63df5770ef89c0cc06b6ee95057b5c4af</PublicKey>
+	<PublicKeyToken>0e903ac20289ddb8</PublicKeyToken>
+  </PropertyGroup>
+
+  <!--
+    Note: when adding new targets, the OpenIddict, OpenIddict.AspNetCore and OpenIddict.Owin
+    metapackages MUST be updated to produce placeholder files for the added target frameworks.
+  -->
+  <PropertyGroup>
+    <NetFrameworkTargetFrameworks Condition=" '$(NetFrameworkTargetFrameworks)' == '' ">
+      net461;
+      net472;
+      net48
+    </NetFrameworkTargetFrameworks>
+    <NetCoreTargetFrameworks Condition=" '$(NetCoreTargetFrameworks)' == '' ">
+      net6.0;
+      net7.0
+    </NetCoreTargetFrameworks>
+    <NetCoreWindowsTargetFrameworks Condition=" '$(NetCoreWindowsTargetFrameworks)' == '' ">
+      net6.0-windows7.0;
+      net6.0-windows10.0.17763;
+      net7.0-windows7.0;
+      net7.0-windows10.0.17763
+    </NetCoreWindowsTargetFrameworks>
+    <NetStandardTargetFrameworks Condition=" '$(NetStandardTargetFrameworks)' == '' ">
+      netstandard2.0;
+      netstandard2.1
+    </NetStandardTargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Dennis Haney</Authors>
+    <Company>Catglobe</Company>
+    <Product>OpenIddict</Product>
+    <_ProjectCopyright>© Dennis Haney. All rights reserved - except those retained by OpenIddict.</_ProjectCopyright>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)package-icon.png</PackageIconFullPath>
+    <PackageProjectUrl>https://github.com/catglobe/openiddict.contrib.pruning.backgroundservice</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>authentication;jwt;openidconnect;openiddict;security</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/catglobe/openiddict.contrib.pruning.backgroundservice.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RepoRelativeProjectDir>$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectDirectory)))</RepoRelativeProjectDir>
+    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+
+  <!--
+    These are set per-project so versioning is applied correctly, but are not set globally otherwise
+    the Arcade SDK will attempt to publish artifacts such as symbols to Microsoft's servers.
+  -->
+  <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' == 'true' And '$(GITHUB_REF.StartsWith(`refs/pull/`))' == 'false' ">
+    <OfficialBuild>true</OfficialBuild>
+    <OfficialBuildId>$(_ComputedOfficialBuildId)</OfficialBuildId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(RepoRelativeProjectDir.Contains('src')) ">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IsPackable>true</IsPackable>
+    <IsShipping>true</IsShipping>
+    <Serviceable>false</Serviceable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="DynamicDependentFile" />
+    <ProjectCapability Include="DynamicFileNesting" />
+  </ItemGroup>
+
+</Project>

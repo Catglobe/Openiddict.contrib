@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34212.112
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Openiddict.contrib.Pruning.BackgroundService", "src\Openiddict.contrib.Pruning.BackgroundService\Openiddict.contrib.Pruning.BackgroundService.csproj", "{88363069-61EF-4E42-A35A-D496333E9D0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1613A311-51E9-4265-ABBE-D9608C031C20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5DF3655F-28AF-442F-8B18-C41A3490B10C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{E0394D76-0D4F-49FC-A6E2-F315537B132F}"
+	ProjectSection(SolutionItems) = preProject
+		eng\CodeAnalysis.ruleset = eng\CodeAnalysis.ruleset
+		eng\key.snk = eng\key.snk
+		eng\Signing.props = eng\Signing.props
+		eng\Tools.props = eng\Tools.props
+		eng\Version.Details.xml = eng\Version.Details.xml
+		eng\Versions.props = eng\Versions.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{E2102B2A-765E-4886-BF66-F6E9D1413EA9}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Build.cmd = Build.cmd
+		build.sh = build.sh
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		LICENSE = LICENSE
+		NuGet.config = NuGet.config
+		package-icon.png = package-icon.png
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIddict.contrib.Pruning.BackgroundService.Tests", "test\OpenIddict.contrib.Pruning.BackgroundService.Tests\OpenIddict.contrib.Pruning.BackgroundService.Tests.csproj", "{06399294-378E-4C3E-83D0-CBC71C8FD9B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{AD6C4C71-7B87-42F0-B376-479EDB11945D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88363069-61EF-4E42-A35A-D496333E9D0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88363069-61EF-4E42-A35A-D496333E9D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88363069-61EF-4E42-A35A-D496333E9D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88363069-61EF-4E42-A35A-D496333E9D0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06399294-378E-4C3E-83D0-CBC71C8FD9B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06399294-378E-4C3E-83D0-CBC71C8FD9B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06399294-378E-4C3E-83D0-CBC71C8FD9B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06399294-378E-4C3E-83D0-CBC71C8FD9B2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{88363069-61EF-4E42-A35A-D496333E9D0D} = {1613A311-51E9-4265-ABBE-D9608C031C20}
+		{06399294-378E-4C3E-83D0-CBC71C8FD9B2} = {5DF3655F-28AF-442F-8B18-C41A3490B10C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CE9F225-3F14-46F9-A8E2-FBB06C14BC08}
+	EndGlobalSection
+EndGlobal

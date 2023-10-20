@@ -1,0 +1,144 @@
+<Project>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!--
+    Note: Arcade automatically replaces copyrights defined in .props or .csproj files
+    by the default Microsoft copyright. To ensure this doesn't happen, the replaced
+    copyright is restored in this .targets file using the private variable set in .props.
+    Similarly, both delayed and public signing are disabled to override Arcade's defaults.
+  -->
+  
+  <PropertyGroup>
+    <Copyright>$(_ProjectCopyright)</Copyright>
+    <DelaySign>false</DelaySign>
+    <PublicSign>false</PublicSign>
+  </PropertyGroup>
+
+  <!--
+    Note: .NET Framework and .NET Core <3.0/.NET Standard assemblies are not annotated
+    with nullable references annotations. To avoid errors on these target frameworks,
+    related warnings are disabled by using Nullable = "annotations" instead of "enable".
+  -->
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'   And $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETFramework') Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard') ">
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.5'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_NAMED_PIPE_CONSTRUCTOR_WITH_ACL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'   And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '1.0'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.7'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '1.6'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_ECDSA</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'   And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.0')))   Or
+                ('$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.7.2'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.1'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_CERTIFICATE_GENERATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_EPHEMERAL_KEY_SETS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_KEY_DERIVATION_WITH_SPECIFIED_HASH_ALGORITHM</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_RSA_KEY_CREATION_WITH_SPECIFIED_SIZE</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_TOHASHSET_LINQ_EXTENSION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.1'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.1'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_BROTLI_COMPRESSION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_CURRENT_USER_ONLY_PIPE_OPTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_STATIC_RANDOM_NUMBER_GENERATOR_METHODS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_STREAM_MEMORY_METHODS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_TIME_CONSTANT_COMPARISONS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.2'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.1'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_WEB_INTEGRATION_IN_GENERIC_HOST</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_SERVICE_PROVIDER_IN_HTTP_MESSAGE_HANDLER_BUILDER</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_HOST_APPLICATION_LIFETIME</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_HOST_ENVIRONMENT</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_HTTP_CLIENT_DEFAULT_REQUEST_VERSION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_INTEGER32_RANDOM_NUMBER_GENERATOR_METHODS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp'  And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0'))) Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '2.1'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_BCL_ASYNC_ENUMERABLE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '5.0'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_ENVIRONMENT_PROCESS_PATH</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_HEXADECIMAL_STRING_CONVERSION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_HTTP_CLIENT_DEFAULT_REQUEST_VERSION_POLICY</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_MULTIPLE_VALUES_IN_QUERYHELPERS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_NAMED_PIPE_STATIC_FACTORY_WITH_ACL</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_ONE_SHOT_HASHING_METHODS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_OPERATING_SYSTEM_VERSIONS_COMPARISON</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_PEM_ENCODED_KEY_IMPORT</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_WINFORMS_TASK_DIALOG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '6.0'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_DIRECT_JSON_ELEMENT_SERIALIZATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_JSON_NODES</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_ONE_SHOT_RANDOM_NUMBER_GENERATOR_METHODS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_TASK_WAIT_ASYNC</DefineConstants>
+    <DefineConstants>$(DefineConstants);SUPPORTS_ZLIB_COMPRESSION</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '7.0'))) ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_AUTHENTICATION_HANDLER_SELECTION_FALLBACK</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '5.0'))) Or
+
+                ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '5.0')) And
+                 '$(TargetPlatformIdentifier)' == 'Windows' And '$(TargetPlatformVersion)' != '' And
+                  $([MSBuild]::VersionGreaterThanOrEquals($(TargetPlatformVersion), '8.0'))) Or
+
+                ('$(TargetFrameworkIdentifier)' == '.NETFramework') Or
+                ('$(TargetFrameworkIdentifier)' == '.NETStandard') ">
+    <DefineConstants>$(DefineConstants);SUPPORTS_WINDOWS_RUNTIME</DefineConstants>
+  </PropertyGroup>
+  
+  <!--
+    Note: Arcade always generates .resx backing files with internal static methods/constants.
+    To ensure the OpenIddict resources are public, the default visibility is manually overriden.
+  -->
+
+  <Target Name="OverrideResourcesVisibility" Condition=" @(EmbeddedResourceSGResx) != '' " AfterTargets="_GenerateResxSource">
+    <WriteLinesToFile
+        File=" %(EmbeddedResourceSGResx.SourceOutputPath) "
+        Lines=" $([System.IO.File]::ReadAllText(%(EmbeddedResourceSGResx.SourceOutputPath))
+            .Replace('internal const', 'public const')
+            .Replace('internal static', 'public static')
+            .Replace('static partial class', 'partial class')) "
+        Overwrite="true"
+        Encoding="Unicode" />
+  </Target>
+
+  <ItemGroup>
+    <Using Remove="System.Net.Http" />
+  </ItemGroup>
+
+</Project>
