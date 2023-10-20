@@ -63,11 +63,11 @@
     <Product>Catglobe.OpenIddict.Contrib</Product>
     <_ProjectCopyright>© Dennis Haney. All rights reserved - except those retained by OpenIddict.</_ProjectCopyright>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)package-icon.png</PackageIconFullPath>
-    <PackageProjectUrl>https://github.com/catglobe/openiddict.contrib.pruning.backgroundservice</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/catglobe/openiddict.contrib</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>authentication;jwt;openidconnect;openiddict;security</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/catglobe/openiddict.contrib.pruning.backgroundservice.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/catglobe/openiddict.contrib.git</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>
