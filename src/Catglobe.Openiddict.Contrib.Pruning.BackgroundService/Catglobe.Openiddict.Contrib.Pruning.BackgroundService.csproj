@@ -11,6 +11,7 @@
   <PropertyGroup>
     <Description>Pruning services package for OpenIddict.</Description>
     <PackageTags>$(PackageTags);pruning</PackageTags>
+    <RootNamespace>Openiddict.Contrib.Pruning.BackgroundService</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

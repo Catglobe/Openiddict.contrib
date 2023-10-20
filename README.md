@@ -1,2 +1,2 @@
-# Openiddict.contrib.Pruning.BackgroundService
+# Catglobe.Openiddict.contrib.Pruning.BackgroundService
 Alternative to quartz pruning

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34212.112
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Openiddict.contrib.Pruning.BackgroundService", "src\Openiddict.contrib.Pruning.BackgroundService\Openiddict.contrib.Pruning.BackgroundService.csproj", "{88363069-61EF-4E42-A35A-D496333E9D0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catglobe.Openiddict.Contrib.Pruning.BackgroundService", "src\Catglobe.Openiddict.Contrib.Pruning.BackgroundService\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.csproj", "{88363069-61EF-4E42-A35A-D496333E9D0D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1613A311-51E9-4265-ABBE-D9608C031C20}"
 EndProject
@@ -34,7 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{E2102B2A-7
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenIddict.contrib.Pruning.BackgroundService.Tests", "test\OpenIddict.contrib.Pruning.BackgroundService.Tests\OpenIddict.contrib.Pruning.BackgroundService.Tests.csproj", "{06399294-378E-4C3E-83D0-CBC71C8FD9B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests", "test\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests.csproj", "{06399294-378E-4C3E-83D0-CBC71C8FD9B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{AD6C4C71-7B87-42F0-B376-479EDB11945D}"
 	ProjectSection(SolutionItems) = preProject

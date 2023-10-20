@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(NetFrameworkTargetFrameworks);$(NetCoreTargetFrameworks)</TargetFrameworks>
+	<RootNamespace>Openiddict.Contrib.Pruning.BackgroundService.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OpenIddict.contrib.Pruning.BackgroundService\OpenIddict.contrib.Pruning.BackgroundService.csproj" />
+    <ProjectReference Include="..\..\src\Catglobe.Openiddict.Contrib.Pruning.BackgroundService\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

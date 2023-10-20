@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <StrongNameKeyId>OpenIddict.contrib.Pruning.BackgroundService</StrongNameKeyId>
+    <StrongNameKeyId>Catglobe.OpenIddict.Contrib</StrongNameKeyId>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)eng\key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
@@ -60,7 +60,7 @@
   <PropertyGroup>
     <Authors>Dennis Haney</Authors>
     <Company>Catglobe</Company>
-    <Product>OpenIddict</Product>
+    <Product>Catglobe.OpenIddict.Contrib</Product>
     <_ProjectCopyright>© Dennis Haney. All rights reserved - except those retained by OpenIddict.</_ProjectCopyright>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)package-icon.png</PackageIconFullPath>
     <PackageProjectUrl>https://github.com/catglobe/openiddict.contrib.pruning.backgroundservice</PackageProjectUrl>
