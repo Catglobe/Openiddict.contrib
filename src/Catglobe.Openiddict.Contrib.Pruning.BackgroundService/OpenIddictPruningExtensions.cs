@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace Openiddict.contrib.Pruning.BackgroundService;
+namespace Openiddict.Contrib.Pruning.BackgroundService;
 
 /// <summary>
 /// Exposes extensions allowing to register the OpenIddict Pruning using BackgroundService in the DI container.

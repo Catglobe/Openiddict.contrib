@@ -7,7 +7,7 @@
 using System.ComponentModel;
 using Microsoft.Extensions.Options;
 
-namespace Openiddict.contrib.Pruning.BackgroundService;
+namespace Openiddict.Contrib.Pruning.BackgroundService;
 
 /// <summary>
 /// Contains the methods required to ensure that the OpenIddict Quartz.NET configuration is valid.

@@ -7,7 +7,7 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Openiddict.contrib.Pruning.BackgroundService;
+namespace Openiddict.Contrib.Pruning.BackgroundService;
 
 /// <summary>
 /// Exposes the necessary methods required to configure the OpenIddict Pruning using BackgroundService.

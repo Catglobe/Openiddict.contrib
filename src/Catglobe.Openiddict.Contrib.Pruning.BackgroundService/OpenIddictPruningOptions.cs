@@ -4,7 +4,7 @@
  * the license and the contributors participating to this project.
  */
 
-namespace Openiddict.contrib.Pruning.BackgroundService;
+namespace Openiddict.Contrib.Pruning.BackgroundService;
 
 /// <summary>
 /// Provides various settings needed to configure the OpenIddict Pruning using BackgroundService.

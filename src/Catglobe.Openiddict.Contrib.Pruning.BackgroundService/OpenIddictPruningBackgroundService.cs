@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenIddict.Extensions;
 
-namespace Openiddict.contrib.Pruning.BackgroundService;
+namespace Openiddict.Contrib.Pruning.BackgroundService;
 
 /// <summary>
 /// Represents a Pruning job performing scheduled tasks for OpenIddict.
