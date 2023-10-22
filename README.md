@@ -101,7 +101,7 @@ public class LoginModel : PageModel
 }
 ```
 
-```
+```html
 @page "{handler?}" //<----------------- Notice this
 @model LoginModel
 
@@ -142,7 +142,7 @@ public class LogoutModel : PageModel
 }
 ```
 
-```csharp
+```html
 @page "{handler?}"
 @model LogoutModel
 ```
