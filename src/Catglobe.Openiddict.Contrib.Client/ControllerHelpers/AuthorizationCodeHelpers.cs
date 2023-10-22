@@ -57,10 +57,10 @@ public static class AuthorizationCodeHelpers
    ///    "Example",
    ///    };
    ///    requiredRoles.ExceptWith(resultPrincipal.GetClaim(OpenIddictConstants.Claims.Role)?.Split(" ") ?? []);
-   ///    
-   ///    if (requiredRoles is { Count: &gt; 0 } missingPermissions)
-   ///    return View("NotEnoughPermission", new NotEnoughPermissionModel{ PermissionsMissing = requiredRoles.ToList() });
-   ///    else return null;
+   ///
+   ///    if (requiredRoles is not { Count: &gt; 0 } missingPermissions) return null;
+   ///    PermissionsMissing = requiredRoles.ToList();
+   ///    return Page();
    ///  }
    /// </code></example>
    /// </param>
