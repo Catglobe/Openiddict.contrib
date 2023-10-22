@@ -2,8 +2,9 @@
 using OpenIddict.Client.AspNetCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Openiddict.Contrib.Client.ControllerHelpers;
+namespace Openiddict.Contrib.Client.RazorPageHelpers;
 
 public static class AuthorizationCodeHelpers
 {
@@ -19,20 +20,20 @@ public static class AuthorizationCodeHelpers
    /// </code> would redirect the user to the specified provider, get asked for consent and if agreed, sent back to the returnUrl.
    /// </example>
    /// </summary>
-   /// <param name="controller">The controller</param>
+   /// <param name="pagemodel">The PageModel</param>
    /// <param name="returnUrl">Parameter from UI where the user will be redirected after the auth is done</param>
    /// <param name="provider">The client you want to authenticate with</param>
-   /// <returns>The result you need to return from the controller</returns>
-   public static ChallengeResult InitiateAuthorizationCodeLogin(this ControllerBase controller, string returnUrl, string? provider = null)
+   /// <returns>The result you need to return from the PageModel</returns>
+   public static ChallengeResult InitiateAuthorizationCodeLogin(this PageModel pagemodel, string returnUrl, string? provider = null)
    {
       var properties = new AuthenticationProperties {
          // Only allow local return URLs to prevent open redirect attacks.
-         RedirectUri = controller.Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
+         RedirectUri = pagemodel.Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
       };
       if (!string.IsNullOrEmpty(provider))
          properties.Items[OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = provider;
       // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
-      return controller.Challenge(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+      return pagemodel.Challenge(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
    }
 
    /// <summary>
@@ -47,7 +48,7 @@ public static class AuthorizationCodeHelpers
    /// </code> would redirect the user to the specified provider, get asked for consent and if agreed, sent back to the returnUrl and a login cookie is issued.
    /// </example>
    /// </summary>
-   /// <param name="controller">The controller</param>
+   /// <param name="pagemodel">The PageModel</param>
    /// <param name="customCheck">If you want to do some additional checks (such as double check scopes granted from user match the ones you require).
    /// <example>For example:
    /// <code>
@@ -57,10 +58,10 @@ public static class AuthorizationCodeHelpers
    ///    "Example",
    ///    };
    ///    requiredRoles.ExceptWith(resultPrincipal.GetClaim(OpenIddictConstants.Claims.Role)?.Split(" ") ?? []);
-   ///
-   ///    if (requiredRoles is not { Count: &gt; 0 } missingPermissions) return null;
-   ///    PermissionsMissing = requiredRoles.ToList();
-   ///    return Page();
+   ///    
+   ///    if (requiredRoles is { Count: &gt; 0 } missingPermissions)
+   ///    return View("NotEnoughPermission", new NotEnoughPermissionModel{ PermissionsMissing = requiredRoles.ToList() });
+   ///    else return null;
    ///  }
    /// </code></example>
    /// </param>
@@ -71,11 +72,11 @@ public static class AuthorizationCodeHelpers
    /// </code>
    /// </example>
    /// </param>
-   ///  <returns>The result you need to return from the controller</returns>
-   public static async Task<ActionResult> StoreRemoteAuthInSchemeAsync(this ControllerBase controller, Func<ClaimsPrincipal, ActionResult?>? customCheck = null, Action<ClaimsIdentity, ClaimsPrincipal>? storeRemoteInfo = null)
+   ///  <returns>The result you need to return from the PageModel</returns>
+   public static async Task<ActionResult> StoreRemoteAuthInSchemeAsync(this PageModel pagemodel, Func<ClaimsPrincipal, ActionResult?>? customCheck = null, Action<ClaimsIdentity, ClaimsPrincipal>? storeRemoteInfo = null)
    {
      // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
-      var result = await controller.HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+      var result = await pagemodel.HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
 
       // Multiple strategies exist to handle OAuth 2.0/OpenID Connect callbacks, each with their pros and cons:
       //
@@ -157,7 +158,7 @@ public static class AuthorizationCodeHelpers
       //
       // For scenarios where the default sign-in handler configured in the ASP.NET Core
       // authentication options shouldn't be used, a specific scheme can be specified here.
-      return controller.SignIn(new(identity), properties);
+      return pagemodel.SignIn(new(identity), properties, (string)null!);
    }
 
    /// <summary>
@@ -173,33 +174,33 @@ public static class AuthorizationCodeHelpers
    /// </code> would log out locally, and then redirect the user to the specified provider, get asked for consent to also log out at provider and if agreed, sent back to the returnUrl.
    /// </example>
    /// </summary>
-   /// <param name="controller">The controller</param>
+   /// <param name="pagemodel">The PageModel</param>
    /// <param name="returnUrl">Parameter from UI where the user will be redirected after the auth is done</param>
-   /// <returns>The result you need to return from the controller</returns>
-   public static async Task<ActionResult> LocalAndRemoteLogOutAsync(this ControllerBase controller, string returnUrl)
+   /// <returns>The result you need to return from the PageModel</returns>
+   public static async Task<ActionResult> LocalAndRemoteLogOutAsync(this PageModel pagemodel, string returnUrl)
    {
       // Retrieve the identity stored in the local authentication cookie. If it's not available,
       // this indicate that the user is already logged out locally (or has not logged in yet).
       //
       // For scenarios where the default authentication handler configured in the ASP.NET Core
       // authentication options shouldn't be used, a specific scheme can be specified here.
-      var result = await controller.HttpContext.AuthenticateAsync();
+      var result = await pagemodel.HttpContext.AuthenticateAsync();
       if (result is not { Succeeded: true })
       {
          // Only allow local return URLs to prevent open redirect attacks.
-         return controller.Redirect(controller.Url.IsLocalUrl(returnUrl) ? returnUrl : "/");
+         return pagemodel.LocalRedirect(pagemodel.Url.IsLocalUrl(returnUrl) ? returnUrl : "/");
       }
 
       // Remove the local authentication cookie before triggering a redirection to the remote server.
       //
       // For scenarios where the default sign-out handler configured in the ASP.NET Core
       // authentication options shouldn't be used, a specific scheme can be specified here.
-      await controller.HttpContext.SignOutAsync();
+      await pagemodel.HttpContext.SignOutAsync();
 
       var properties = new AuthenticationProperties
       {
          // Only allow local return URLs to prevent open redirect attacks.
-         RedirectUri = controller.Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
+         RedirectUri = pagemodel.Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
          Items =
          {
             // While not required, the specification encourages sending an id_token_hint
@@ -210,8 +211,8 @@ public static class AuthorizationCodeHelpers
       if (result.Properties.Items.TryGetValue(OpenIddictClientAspNetCoreConstants.Properties.ProviderName, out var provider))
          properties.Items[OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = provider;
 
-      await controller.HttpContext.SignOutAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme, properties);
-      return controller.Redirect(returnUrl);
+      await pagemodel.HttpContext.SignOutAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme, properties);
+      return pagemodel.LocalRedirect(returnUrl);
    }
 
    /// <summary>
@@ -227,18 +228,18 @@ public static class AuthorizationCodeHelpers
    /// </code> would log out locally, and then redirect the user to the specified provider, get asked for consent to also log out at provider and if agreed, sent back to the returnUrl.
    /// </example>
    /// </summary>
-   /// <param name="controller">The controller</param>
-   /// <returns>The result you need to return from the controller</returns>
-   public static async Task<ActionResult> RemoteLogOutCallbackAsync(this ControllerBase controller)
+   /// <param name="pagemodel">The PageModel</param>
+   /// <returns>The result you need to return from the PageModel</returns>
+   public static async Task<ActionResult> RemoteLogOutCallbackAsync(this PageModel pagemodel)
    {
       // Retrieve the data stored by OpenIddict in the state token created when the logout was triggered.
-      var result = await controller.HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+      var result = await pagemodel.HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
 
       // In this sample, the local authentication cookie is always removed before the user agent is redirected
       // to the authorization server. Applications that prefer delaying the removal of the local cookie can
       // remove the corresponding code from the logout action and remove the authentication cookie in this action.
 
-      return controller.Redirect(result?.Properties?.RedirectUri ?? "/");
+      return pagemodel.LocalRedirect(result?.Properties?.RedirectUri ?? "/");
    }
 
 }
