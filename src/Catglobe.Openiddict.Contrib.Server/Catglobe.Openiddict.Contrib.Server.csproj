@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Helpers for OpenIddict aspnetcore clients.</Description>
-    <PackageTags>$(PackageTags);client;aspnetcore</PackageTags>
-    <RootNamespace>Openiddict.Contrib.Client</RootNamespace>
+    <Description>Helpers for OpenIddict aspnetcore servers.</Description>
+    <PackageTags>$(PackageTags);server;aspnetcore</PackageTags>
+    <RootNamespace>Openiddict.Contrib.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,9 +18,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))) Or
-                         ('$(TargetFrameworkIdentifier)' == '.NETFramework') Or
-						 ('$(TargetFrameworkIdentifier)' == '.NETStandard') ">
+  <ItemGroup Condition=" ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))) Or&#xD;&#xA;                         ('$(TargetFrameworkIdentifier)' == '.NETFramework') Or&#xD;&#xA;						 ('$(TargetFrameworkIdentifier)' == '.NETStandard') ">
     <PackageReference Include="Microsoft.AspNetCore.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />

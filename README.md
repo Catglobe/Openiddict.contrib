@@ -202,3 +202,145 @@ public class DemoApiController(AdminDemoApiService remote) : Controller
   public Task<Dictionary<string, string>> Remote(CancellationToken cancellationToken) => remote.GetAsync(cancellationToken);
 }
 ```
+
+### Cookie helper
+
+Setup API calls to return 401/403 instead of redirecting to login page.
+
+```csharp
+services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+   .AddCookie(o =>
+   {
+      ...
+      o.ReturnStatusCodesOnAuthFailuresForApiCalls();
+   });
+```
+
+# Catglobe.Openiddict.Contrib.Server
+
+Tons of helper classses and extension methods to make implementing a server project trivial.
+
+### Helper Base class for Authentication flow
+
+Various helper classes to make implementing a server trivial.
+
+```csharp
+public sealed class MyAccessGranter : OidcAccessGranterBase {...}
+```
+or 
+```csharp
+public sealed class MyAccessGranter : AllInfoInUserinfoEndpoint {...}
+```
+
+Use the base classes from the namespace `ControllerHelpers` or `RazorPageHelpers` depending on your needs.
+
+and then register `services.AddScoped<MyAccessGranter>();` and use it:
+
+```csharp
+public sealed class AuthorizationController(MyAccessGranter accessGranter) : ControllerBase {
+   [HttpGet("~/connect/authorize"), HttpPost("~/connect/authorize"), IgnoreAntiforgeryToken]
+   public Task<IActionResult> Authorize() => _accessGranter.HandleAuthenticationFlowRequest(this, async (manager,client,request) => {
+     return View(new MyConsentViewModel(){ApplicationName = await manager.GetDisplayNameAsync(application), Scope = request.GetScopes()});
+   });
+
+   [Authorize, FormValueRequired("submit.Accept"), HttpPost("~/connect/authorize"), ValidateAntiForgeryToken]
+   public Task<IActionResult> Accept() => _accessGranter.HandleConsentGranted(this);
+
+   [Authorize, FormValueRequired("submit.Deny"), HttpPost("~/connect/authorize"), ValidateAntiForgeryToken]
+   public Task<IActionResult> Deny() => _accessGranter.HandleConsentDenied(this);
+}
+```
+
+or if using razor pages:
+```csharp
+[IgnoreAntiforgeryToken]
+public sealed class AuthorizeModel(MyAccessGranter accessGranter) : PageModel {
+   public string ApplicationName { get; private set; } = default!;
+   public IEnumerable<string> Scope { get; private set; } = default!;
+   public Task<IActionResult> GetAsync() => Handle();
+   public Task<IActionResult> PostAsync() => Handle();
+   private Task<IActionResult> Handle() => _accessGranter.HandleAuthenticationFlowRequest(this, async (manager,client,request) => {
+     ApplicationName = await manager.GetDisplayNameAsync(application);
+     Scope = request.GetScopes();
+     return Page();
+   });
+   public Task<IActionResult> PostConsentAsync(string action) => 
+     action == "submit.Accept" ? _accessGranter.HandleConsentGranted(this) : _accessGranter.HandleConsentDenied(this);
+}
+```
+```html
+@page "{handler?}" //<----------------- Notice this
+@model AuthorizeModel
+
+<PageTitle>Grant access</PageTitle>
+
+<div class="jumbotron">
+ <h1>Authorization</h1>
+ <p class="lead text-left">Do you want to grant <strong>@Model.ApplicationName</strong> access to your data? (scopes requested: @Model.Scope)</p>
+ <form asp-page-handler="consent" method="post">
+  @Html.AntiForgeryToken()
+
+  @foreach (var parameter in Context.Request.HasFormContentType ? Context.Request.Form.AsEnumerable() : Context.Request.Query)
+  {
+     <input type="hidden" name="@parameter.Key" value="@parameter.Value"/>
+  }
+
+  <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Yes"/>
+  <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="No"/>
+ </form>
+</div>
+```
+
+### Token exchange helpers
+
+Use the base classes from the namespace `ControllerHelpers` or `MinimalApiHelpers` depending on your needs.
+
+```csharp
+internal sealed class MyClientCredentialsTokenExchangeHelper : ClientCredentialsTokenExchangeHelperBase {...}
+internal sealed class MyAuthFlowAndRefreshTokenHelper : AuthorizationFlowAndRefreshTokenExchangeHelperBase {...}
+services.AddScoped<MyClientCredentialsTokenExchangeHelper>();
+services.AddScoped<MyAuthFlowAndRefreshTokenHelper>();
+```
+
+And use:
+
+```csharp
+public sealed class TokenController(MyClientCredentialsTokenExchangeHelper enableClientCreds,
+                                    MyAuthFlowAndRefreshTokenHelper enableRefreshTokenAndAuthFlow) : ControllerBase {
+   [HttpPost("~/connect/token"), IgnoreAntiforgeryToken, Produces("application/json")]
+   public async Task<IActionResult> Exchange() {
+     var request = this.GetOpenIddictServerRequest();
+     if (await enableClientCreds.Process(this, request) is {} result) return result;
+     if (await enableRefreshTokenAndAuthFlow.Process(this, request) is {} result) return result;
+
+     return this.ForbidOpenIddict(Errors.UnsupportedGrantType, "The specified grant type is not supported.");
+   }
+}
+```
+
+or if using minimal api:
+```csharp
+app.MapPost("/connect/token", (HttpContext context,
+                               MyClientCredentialsTokenExchangeHelper enableClientCreds,
+                               MyAuthFlowAndRefreshTokenHelper enableRefreshTokenAndAuthFlow) => {
+     var request = context.GetOpenIddictServerRequest();
+     if (await enableClientCreds.Process(this, request) is {} result) return result;
+     if (await enableRefreshTokenAndAuthFlow.Process(this, request) is {} result) return result;
+
+     return AuthorizationCodeHelpers.ForbidOpenIddict(Errors.UnsupportedGrantType, "The specified grant type is not supported.");
+   }
+}
+```
+
+### Cookie helper
+
+Setup API calls to return 401/403 instead of redirecting to login page.
+
+```csharp
+services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+   .AddCookie(o =>
+   {
+      ...
+      o.ReturnStatusCodesOnAuthFailuresForApiCalls();
+   });
+```
