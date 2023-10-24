@@ -260,12 +260,12 @@ public sealed class AuthorizeModel(MyAccessGranter accessGranter) : PageModel {
    public Task<IActionResult> GetAsync() => Handle();
    public Task<IActionResult> PostAsync() => Handle();
    private Task<IActionResult> Handle() => _accessGranter.HandleAuthenticationFlowRequest(this, async (manager,client,request) => {
-     ApplicationName = await manager.GetDisplayNameAsync(client);
+     ApplicationName = (await manager.GetDisplayNameAsync(client))!;;
      Scope = request.GetScopes();
      return Page();
    });
    public Task<IActionResult> PostConsentAsync(string action) => 
-     action == "submit.Accept" ? _accessGranter.HandleConsentGranted(this) : _accessGranter.HandleConsentDenied(this);
+     action == "submit.Accept" ? _accessGranter.HandleConsentGranted(this) : Task.FromResult(_accessGranter.HandleConsentDenied(this));
 }
 ```
 ```html
@@ -320,12 +320,12 @@ public sealed class TokenController(MyClientCredentialsTokenExchangeHelper enabl
 
 or if using minimal api:
 ```csharp
-app.MapPost("/connect/token", (HttpContext context,
+app.MapPost("/connect/token", async (HttpContext context,
                                MyClientCredentialsTokenExchangeHelper enableClientCreds,
                                MyAuthFlowAndRefreshTokenHelper enableRefreshTokenAndAuthFlow) => {
-     var request = context.GetOpenIddictServerRequest();
-     if (await enableClientCreds.Process(this, request) is {} result) return result;
-     if (await enableRefreshTokenAndAuthFlow.Process(this, request) is {} result) return result;
+     var request = context.GetOpenIddictServerRequest() ?? throw new();
+     if (await enableClientCreds.Process(request) is {} result) return result;
+     if (await enableRefreshTokenAndAuthFlow.Process(context, request) is {} result) return result;
 
      return AuthorizationCodeHelpers.ForbidOpenIddict(Errors.UnsupportedGrantType, "The specified grant type is not supported.");
    }
