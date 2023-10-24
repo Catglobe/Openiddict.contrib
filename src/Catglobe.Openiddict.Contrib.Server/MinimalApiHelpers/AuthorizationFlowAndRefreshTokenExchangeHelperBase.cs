@@ -11,11 +11,11 @@ namespace Openiddict.Contrib.Server.MinimalApiHelpers;
 /// </summary>
 public abstract class AuthorizationFlowAndRefreshTokenExchangeHelperBase(IDestinationManager destination)
 {
-   public async Task<IResult?> Process(ControllerBase controller, OpenIddictRequest request)
+   public async Task<IResult?> Process(HttpContext httpContext, OpenIddictRequest request)
    {
       if (!request.IsAuthorizationCodeGrantType() && !request.IsRefreshTokenGrantType()) return null;
 
-      var result = await controller.HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+      var result = await httpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
       // Retrieve the user profile corresponding to the authorization code/refresh token.
       if (!result.Succeeded) return AuthorizationCodeHelpers.ForbidOpenIddict(Errors.InvalidGrant, "The token is no longer valid.");
