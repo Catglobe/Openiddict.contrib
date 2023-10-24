@@ -9,10 +9,10 @@ namespace Openiddict.Contrib.Server;
 /// </summary>
 public class DefaultDestinationManager : IDestinationManager
 {
-    protected static readonly IEnumerable<string> DestinationNone = [];
-    protected static readonly IEnumerable<string> DestinationToken = [Destinations.AccessToken];
-    protected static readonly IEnumerable<string> DestinationBoth = [Destinations.AccessToken, Destinations.IdentityToken];
-    protected static readonly IEnumerable<string> DestinationId = [Destinations.IdentityToken];
+    protected static readonly IEnumerable<string> DestinationNone  = new List<string>(0);
+    protected static readonly IEnumerable<string> DestinationToken = new List<string>(1){Destinations.AccessToken};
+    protected static readonly IEnumerable<string> DestinationBoth  = new List<string>(2){Destinations.AccessToken, Destinations.IdentityToken};
+    protected static readonly IEnumerable<string> DestinationId    = new List<string>(1){Destinations.IdentityToken};
 
     /// <summary>
     /// Determine which info ends up in which tokens.
