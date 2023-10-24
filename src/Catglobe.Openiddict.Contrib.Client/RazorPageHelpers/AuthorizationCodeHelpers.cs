@@ -211,8 +211,7 @@ public static class AuthorizationCodeHelpers
       if (result.Properties.Items.TryGetValue(OpenIddictClientAspNetCoreConstants.Properties.ProviderName, out var provider))
          properties.Items[OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = provider;
 
-      await model.HttpContext.SignOutAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme, properties);
-      return model.LocalRedirect(returnUrl);
+      return model.SignOut(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
    }
 
    /// <summary>
