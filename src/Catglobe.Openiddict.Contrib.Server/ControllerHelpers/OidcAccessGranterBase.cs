@@ -137,20 +137,6 @@ public abstract class OidcAccessGranterBase(IOpenIddictApplicationManager applic
    protected virtual Task<string> GetUserId(ClaimsPrincipal claimsPrincipal, ControllerBase controller) => Task.FromResult(claimsPrincipal.GetClaim(Claims.Subject)!);
 
    /// <summary>
-   /// Override to show your consent form.
-   /// <example>
-   /// <code>
-   /// => controller.View(new ConsentViewModel{ApplicationName = await _applicationManager.GetLocalizedDisplayNameAsync(application), Scope = request.GetScopes()});
-   /// </code></example>
-   /// </summary>
-   /// <param name="controller">Current controller.</param>
-   /// <param name="clientApplication">The object that contains the client application. Use with <see cref="IOpenIddictApplicationManager"/>.</param>
-   /// <param name="request">The ongoing request.</param>
-   /// <returns>Usually a view to get consent, but could also be a redirect or remote challenge.</returns>
-   protected abstract Task<IActionResult> ShowConsentForm(ControllerBase controller, object clientApplication,
-      OpenIddictRequest request);
-
-   /// <summary>
    /// Map the request to an actual identity.
    /// </summary>
    /// <param name="request">The successful request.</param>

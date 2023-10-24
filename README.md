@@ -260,7 +260,7 @@ public sealed class AuthorizeModel(MyAccessGranter accessGranter) : PageModel {
    public Task<IActionResult> GetAsync() => Handle();
    public Task<IActionResult> PostAsync() => Handle();
    private Task<IActionResult> Handle() => _accessGranter.HandleAuthenticationFlowRequest(this, async (manager,client,request) => {
-     ApplicationName = await manager.GetDisplayNameAsync(application);
+     ApplicationName = await manager.GetDisplayNameAsync(client);
      Scope = request.GetScopes();
      return Page();
    });

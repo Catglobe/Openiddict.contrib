@@ -22,7 +22,7 @@ public abstract class AllInfoInUserinfoEndpoint(IOpenIddictApplicationManager ap
    /// This simple stores the scopes in the identity, and the userinfo endpoint will return all other claims in the identity.
    /// </summary>
    protected override Task<ImmutableArray<string>> SetClaimsAndGetScopes(ClaimsIdentity identity, OpenIddictRequest request,
-      string userId, object application, PageBase pageBase)
+      string userId, object application, PageModel model)
    {
       var scopes        = request.GetScopes();
       //A child class can override this method to add additional claims to the identity.
