@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{E2102B2A-7
 		NuGet.config = NuGet.config
 		package-icon.png = package-icon.png
 		README.md = README.md
+		RELEASE.md = RELEASE.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests", "test\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests\Catglobe.Openiddict.Contrib.Pruning.BackgroundService.Tests.csproj", "{06399294-378E-4C3E-83D0-CBC71C8FD9B2}"
