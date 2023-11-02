@@ -147,8 +147,57 @@ public class LogoutModel : PageModel
 @model LogoutModel
 ```
 
-## Http helpers
+### Minimal API helpers
 
+Makes it trivial to implement a client minimal api that can handle external logins using the authentication code flow.
+
+```csharp
+//call from login page, if you require user is logged out before logging in again
+host.MapGet("/logoutAndRedirect", (Delegate)([AllowAnonymous](HttpContext httpContext) => httpContext.EnsureLoggedOut($"/login{httpContext.Request.QueryString.Value ?? ""}")));
+
+//post to this endpoint from the login page
+host.MapPost("/login-oidc", [AllowAnonymous](HttpContext httpContext, string returnUrl) => httpContext.InitiateAuthorizationCodeLogin(returnUrl, providerName));
+//OR
+//navigate to this endpoint from the login page
+host.MapGet("/login-oidc", [AllowAnonymous](HttpContext httpContext, string returnUrl) => httpContext.InitiateAuthorizationCodeLogin(returnUrl, providerName));
+
+//the configured callback url of the oidc client
+host.MapGet("/login/callback", (Delegate)((HttpContext httpContext) => httpContext.StoreRemoteAuthInSchemeAsync(customCheck, storeRemoteInfo)));
+
+//post to this endpoint from the logout page
+host.MapPost("/logout-oidc", [AllowAnonymous](HttpContext httpContext, string returnUrl = "/") => httpContext.LocalAndRemoteLogOutAsync(returnUrl));
+//the configured callback url of the oidc client
+host.MapGet("/logout/callback", (Delegate)((HttpContext httpContext) => httpContext.RemoteLogOutCallbackAsync()));
+```
+
+You can also add a dummy parameter to get rid of the cast to `Delegate`:
+
+```csharp
+host.MapGet("/logoutAndRedirect", [AllowAnonymous](HttpContext httpContext, string? _ = null) => httpContext.EnsureLoggedOut($"/login{httpContext.Request.QueryString.Value ?? ""}"));
+```
+
+Blazor login page example:
+
+```csharp
+@inject NavigationManager NavigationManager
+<EditForm OnValidSubmit="Submit">...</EditForm>
+@code {
+ [SupplyParameterFromQuery]
+ private string ReturnUrl { get; set; } = "/";
+ private void Submit() => NavigationManager.NavigateTo($"/login-oidc?returnUrl={Uri.EscapeDataString(ReturnUrl)}", forceLoad: true);
+}
+
+//and force logout before re-login:
+ [CascadingParameter]
+ private Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+ protected override async Task OnInitializedAsync()
+ {
+  if ((await AuthenticationState).User?.Identity?.IsAuthenticated == true) { NavigationManager.NavigateTo($"/LogoutAndRedirect{new Uri(NavigationManager.Uri).Query}", new NavigationOptions() {ForceLoad = true, ReplaceHistoryEntry = true}); }
+ }
+}
+```
+
+## Http helpers
 
 ### HttpClient for authentication code flow
 
@@ -271,22 +320,29 @@ public sealed class AuthorizeModel(MyAccessGranter accessGranter) : PageModel {
 ```html
 @page "{handler?}" //<----------------- Notice this
 @model AuthorizeModel
-
-<PageTitle>Grant access</PageTitle>
-
+@{
+   Layout = "_Layout";
+}
 <div class="jumbotron">
  <h1>Authorization</h1>
- <p class="lead text-left">Do you want to grant <strong>@Model.ApplicationName</strong> access to your data? (scopes requested: @Model.Scope)</p>
- <form asp-page-handler="consent" method="post">
+ <p class="lead text-left">Do you want to grant <strong>@Model.ApplicationName</strong> access to your data?</p>
+ <h2>Scopes requested</h2>
+ <ul>
+  @foreach (var scope in Model.Scope)
+  {
+     <li>@scope</li>
+  }
+ </ul>
+ <form method="post">
   @Html.AntiForgeryToken()
 
-  @foreach (var parameter in Context.Request.HasFormContentType ? Context.Request.Form.AsEnumerable() : Context.Request.Query)
+  @foreach (var parameter in Request.HasFormContentType ? Request.Form.AsEnumerable() : Request.Query)
   {
-     <input type="hidden" name="@parameter.Key" value="@parameter.Value"/>
+   <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
   }
 
-  <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Yes"/>
-  <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="No"/>
+  <button class="btn btn-lg btn-success" asp-page-handler="Accept">Yes</button>
+  <button class="btn btn-lg btn-danger" asp-page-handler="Deny">No</button>
  </form>
 </div>
 ```
@@ -307,7 +363,7 @@ And use:
 ```csharp
 public sealed class TokenController(MyClientCredentialsTokenExchangeHelper enableClientCreds,
                                     MyAuthFlowAndRefreshTokenHelper enableRefreshTokenAndAuthFlow) : ControllerBase {
-   [HttpPost("~/connect/token"), IgnoreAntiforgeryToken, Produces("application/json")]
+   [HttpPost("~/connect/token"), AllowAnonymous, IgnoreAntiforgeryToken, Produces("application/json")]
    public async Task<IActionResult> Exchange() {
      var request = this.GetOpenIddictServerRequest();
      if (await enableClientCreds.Process(this, request) is {} result) return result;
@@ -320,7 +376,7 @@ public sealed class TokenController(MyClientCredentialsTokenExchangeHelper enabl
 
 or if using minimal api:
 ```csharp
-app.MapPost("/connect/token", async (HttpContext context,
+app.MapPost("/connect/token", [AllowAnonymous] async (HttpContext context,
                                MyClientCredentialsTokenExchangeHelper enableClientCreds,
                                MyAuthFlowAndRefreshTokenHelper enableRefreshTokenAndAuthFlow) => {
      var request = context.GetOpenIddictServerRequest() ?? throw new();
