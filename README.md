@@ -197,6 +197,31 @@ Blazor login page example:
 }
 ```
 
+# I18n helpers
+
+Helpers to make it trivial to implement a client that pulls the language and culture info from the server.
+
+```csharp
+host.UseRequestLocalization(o => {
+   var cultures = ...;
+   o.AddSupportedCultures(cultures)
+    .AddSupportedUICultures(cultures)
+    .SetDefaultCulture(cultures[0]);
+   //insert before the final default provider (the AcceptLanguageHeaderRequestCultureProvider)
+   o.RequestCultureProviders.Insert(o.RequestCultureProviders.Count - 1, new OidcClaimsCultureProvider {Options = o});
+});
+```
+
+Notice, this requires the server sets the culture info in the claims.
+See below for example, or see `OidcClaimsCultureProviderHelper.AddClaims` for details.
+
+You also need to copy it from the server given claims to the local claims. E.g. if using `StoreRemoteAuthInSchemeAsync`:
+
+```csharp
+yourContext.StoreRemoteAuthInSchemeAsync(..., (identity, remote)=>OidcClaimsCultureProviderHelper.CopyClaims(identity, remote))))
+```
+
+
 ## Http helpers
 
 ### HttpClient for authentication code flow
@@ -399,4 +424,19 @@ services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
       ...
       o.ReturnStatusCodesOnAuthFailuresForApiCalls();
    });
+```
+
+### I18n helper
+
+Add OIDC standard claims for culture (`locale`) and the non-standard `ui-locales` for the ui-culture.
+
+```csharp
+public abstract class ApplyCultureToClaims(...) : OidcAccessGranterBase(...)
+{
+   protected override Task<ImmutableArray<string>> SetClaimsAndGetScopes(...)
+   {
+      OidcClaimsCultureProviderHelper.AddClaimsFromCurrentCulture(identity);
+      return base.SetClaimsAndGetScopes(...);
+   }
+}
 ```
