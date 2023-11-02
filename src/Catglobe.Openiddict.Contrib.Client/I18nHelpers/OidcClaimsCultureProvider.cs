@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿#if NET
+using Microsoft.AspNetCore.Localization;
 using System.Security.Claims;
 
 namespace Openiddict.Contrib.Client.I18nHelpers;
@@ -66,3 +67,4 @@ public class OidcClaimsCultureProvider : RequestCultureProvider
    public static void CopyClaims(ClaimsIdentity identity, ClaimsPrincipal remote) => AddClaims(identity, remote.GetClaim(OpenIddictConstants.Claims.Locale), remote.GetClaim(OpenIddictConstants.Parameters.UiLocales));
 
 }
+#endif
