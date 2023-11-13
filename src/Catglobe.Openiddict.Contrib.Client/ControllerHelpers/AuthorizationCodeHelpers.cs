@@ -2,6 +2,7 @@
 using OpenIddict.Client.AspNetCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Openiddict.Contrib.Client.ControllerHelpers;
 
@@ -22,8 +23,9 @@ public static class AuthorizationCodeHelpers
    /// <param name="controller">The controller</param>
    /// <param name="returnUrl">Parameter from UI where the user will be redirected after the auth is done</param>
    /// <param name="provider">The client you want to authenticate with</param>
+   /// <param name="claims">Any additional claims you want to request. See <see cref="RequestClaimsParameterValue.AsOpenIddictParameter"></see>.</param>
    /// <returns>The result you need to return from the controller</returns>
-   public static ChallengeResult InitiateAuthorizationCodeLogin(this ControllerBase controller, string returnUrl, string? provider = null)
+   public static ChallengeResult InitiateAuthorizationCodeLogin(this ControllerBase controller, string returnUrl, string? provider = null, OpenIddictParameter? claims = default)
    {
       var properties = new AuthenticationProperties {
          // Only allow local return URLs to prevent open redirect attacks.
@@ -31,6 +33,8 @@ public static class AuthorizationCodeHelpers
       };
       if (!string.IsNullOrEmpty(provider))
          properties.Items[OpenIddictClientAspNetCoreConstants.Properties.ProviderName] = provider;
+      if (claims is {} claim)
+         properties.Parameters[Parameters.Claims] = claim;
       // Ask the OpenIddict client middleware to redirect the user agent to the identity provider.
       return controller.Challenge(properties, OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
    }
