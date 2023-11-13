@@ -221,6 +221,21 @@ You also need to copy it from the server given claims to the local claims. E.g. 
 yourContext.StoreRemoteAuthInSchemeAsync(..., (identity, remote)=>OidcClaimsCultureProviderHelper.CopyClaims(identity, remote))))
 ```
 
+## Claims helpers
+
+https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter specifies how to request claims from the request.
+
+Notice, you still have to manually check they are present in the response.
+
+```csharp
+//in the login controller
+var claims = new RequestClaimsParameterValue()
+                 .IdTokenClaim(Claims.AuthenticationTime, true);
+this.InitiateAuthorizationCodeLogin(returnUrl, ..., claims.AsOpenIddictParameter());
+...
+//in the callback controller
+this.StoreRemoteAuthInSchemeAsync(..., (principal)=>principal.GetClaim(Claims.AuthenticationTime)...)
+```
 
 ## Http helpers
 
