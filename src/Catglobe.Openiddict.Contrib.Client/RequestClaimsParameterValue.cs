@@ -8,8 +8,8 @@ namespace Openiddict.Contrib.Client;
 /// </summary>
 public class RequestClaimsParameterValue
 {
-   private readonly Dictionary<string, JsonNode?> _userinfo = [];
-   private readonly Dictionary<string, JsonNode?> _claims = [];
+   private readonly Dictionary<string, JsonNode?> _userinfo = new();
+   private readonly Dictionary<string, JsonNode?> _claims = new();
 
    /// <summary>
    /// Specify a user info claim that should be returned from the authentication request.
