@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Net.Http.Headers;
 
-namespace Openiddict.Contrib.Client;
+namespace Openiddict.Contrib.Server;
 
 public static class CookieSchemeHelpers
 {
