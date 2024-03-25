@@ -20,17 +20,24 @@ public abstract class AuthorizationFlowAndRefreshTokenExchangeHelperBase(IDestin
       // Retrieve the user profile corresponding to the authorization code/refresh token.
       if (!result.Succeeded) return controller.ForbidOpenIddict(Errors.InvalidGrant, "The token is no longer valid.");
 
-      var err = await ValidateUserAccount(result.Principal!.GetClaim(Claims.Subject)!);
+      var origin = result.Principal.Identities.First();
+      var err = await ValidateUserAccount(origin.GetClaim(Claims.Subject)!);
       if (!string.IsNullOrEmpty(err)) return controller.ForbidOpenIddict(Errors.InvalidGrant, err);
 
-      var existingClaims = result.Principal.Claims.ToList();
-      var identity = new ClaimsIdentity(existingClaims, authenticationType: TokenValidationParameters.DefaultAuthenticationType, nameType: Claims.Name, roleType: Claims.Role);
+      var identity = CreateOAuthIdentity(origin);
 
       identity.SetDestinations(destination.GetDestinations);
 
       // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
       return controller.SignIn(new(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
    }
+
+   /// <summary>
+   /// Create the OAuth identity from the current identity.
+   /// </summary>
+   /// <returns>A new ClaimsIdentity that will be used to auth the OAuth client.</returns>
+   protected virtual ClaimsIdentity CreateOAuthIdentity(ClaimsIdentity currentIdentity) => 
+      new(currentIdentity.Claims.ToList(), authenticationType: TokenValidationParameters.DefaultAuthenticationType, nameType: currentIdentity.NameClaimType, roleType: currentIdentity.RoleClaimType);
 
    /// <summary>
    /// Validate the account is still valid.
