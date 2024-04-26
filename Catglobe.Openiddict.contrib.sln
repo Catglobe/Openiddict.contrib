@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5DF3655F-2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{E0394D76-0D4F-49FC-A6E2-F315537B132F}"
 	ProjectSection(SolutionItems) = preProject
+		eng\AfterTargetFrameworkInference.targets = eng\AfterTargetFrameworkInference.targets
 		eng\CodeAnalysis.ruleset = eng\CodeAnalysis.ruleset
 		eng\key.snk = eng\key.snk
 		eng\Signing.props = eng\Signing.props
@@ -24,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{E2102B2A-7
 		.gitignore = .gitignore
 		Build.cmd = Build.cmd
 		build.sh = build.sh
+		CHANGELOG.md = CHANGELOG.md
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props

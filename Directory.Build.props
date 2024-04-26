@@ -6,8 +6,9 @@
     <LangVersion>preview</LangVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>preview</AnalysisLevel>
-    <NoWarn>$(NoWarn);CS1591;NU5118;NU5128</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591;NU5118;NU5128;xUnit2002</NoWarn>
+    <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DebugSymbols>true</DebugSymbols>
@@ -26,35 +27,50 @@
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)eng\key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
-	<PublicSign>false</PublicSign>
+    <PublicSign>false</PublicSign>
 	<PublicKey>0024000004800000940000000602000000240000525341310004000001000100c584821b0b1097b0829c64856f6a64574a7017f11fce2e7a2c727abca39f973d8602ebb4283d1fe454de079e6bea515e77cee702f49ddf6272be395b94790805b1e3870916334195f4708210edd16232e70080a79fbd4c848191a20083e43709d76f03e2390b5a123c14e12797b67bf63df5770ef89c0cc06b6ee95057b5c4af</PublicKey>
 	<PublicKeyToken>0e903ac20289ddb8</PublicKeyToken>
   </PropertyGroup>
 
-  <!--
-    Note: when adding new targets, the OpenIddict, OpenIddict.AspNetCore and OpenIddict.Owin
-    metapackages MUST be updated to produce placeholder files for the added target frameworks.
-  -->
   <PropertyGroup>
     <NetFrameworkTargetFrameworks Condition=" '$(NetFrameworkTargetFrameworks)' == '' ">
       net461;
       net472;
       net48
     </NetFrameworkTargetFrameworks>
+
     <NetCoreTargetFrameworks Condition=" '$(NetCoreTargetFrameworks)' == '' ">
       net6.0;
-      net7.0
+      net7.0;
+      net8.0
     </NetCoreTargetFrameworks>
+
     <NetCoreWindowsTargetFrameworks Condition=" '$(NetCoreWindowsTargetFrameworks)' == '' ">
       net6.0-windows7.0;
       net6.0-windows10.0.17763;
       net7.0-windows7.0;
-      net7.0-windows10.0.17763
+      net7.0-windows10.0.17763;
+      net8.0-windows7.0;
+      net8.0-windows10.0.17763
     </NetCoreWindowsTargetFrameworks>
+
     <NetStandardTargetFrameworks Condition=" '$(NetStandardTargetFrameworks)' == '' ">
       netstandard2.0;
       netstandard2.1
     </NetStandardTargetFrameworks>
+
+    <!--
+      Note: the .NET Core 5.0 reference assemblies or UWP contract assemblies may not be available if
+      the Windows SDK is not installed (or if a different version is installed). To ensure the solution
+      can be built on machines that don't have the UWP tooling installed, directory checks are used to
+      ensure the reference and contract assemblies are present on the machine before targeting uap10.0.
+    -->
+    <UniversalWindowsPlatformTargetFrameworks
+      Condition=" '$(UniversalWindowsPlatformTargetFrameworks)' == '' And $([MSBuild]::IsOSPlatform('Windows')) And
+                 ('$(GITHUB_ACTIONS)' == 'true' Or (Exists('$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v5.0') And
+                                                    Exists('$(MSBuildProgramFiles32)\Windows Kits\10\References\10.0.17763.0'))) ">
+      uap10.0.17763
+    </UniversalWindowsPlatformTargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -74,6 +90,8 @@
     <RepoRelativeProjectDir>$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectDirectory)))</RepoRelativeProjectDir>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <AfterTargetFrameworkInferenceTargets>$(MSBuildThisFileDirectory)eng\AfterTargetFrameworkInference.targets</AfterTargetFrameworkInferenceTargets>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddTfmSpecificPlaceholders</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <!--
@@ -93,6 +111,10 @@
     <Serviceable>false</Serviceable>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" $(RepoRelativeProjectDir.Contains('src')) Or $(RepoRelativeProjectDir.Contains('test')) ">
+    <IncludeInternalExtensions Condition=" '$(IncludeInternalExtensions)' == '' ">true</IncludeInternalExtensions>
+  </PropertyGroup>
+
   <PropertyGroup>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
   </PropertyGroup>
@@ -100,6 +122,10 @@
   <ItemGroup>
     <ProjectCapability Include="DynamicDependentFile" />
     <ProjectCapability Include="DynamicFileNesting" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IncludeInternalExtensions)' == 'true' ">
+    <Compile Include="$(MSBuildThisFileDirectory)shared\OpenIddict.Extensions\*.cs" Visible="false" />
   </ItemGroup>
 
 </Project>
