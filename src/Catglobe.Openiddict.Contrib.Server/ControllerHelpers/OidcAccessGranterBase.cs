@@ -6,6 +6,7 @@ using OpenIddict.Server.AspNetCore;
 using System.Diagnostics;
 using System.Security.Claims;
 using Openiddict.Contrib.Server;
+using OpenIddict.Abstractions;
 
 namespace Openiddict.Contrib.Server.ControllerHelpers;
 
@@ -109,15 +110,15 @@ public abstract class OidcAccessGranterBase(IOpenIddictApplicationManager applic
       case ConsentTypes.External when hasConsent:
       case ConsentTypes.Explicit when hasConsent:
       case ConsentTypes.External when hasExistingAuth:
-      case ConsentTypes.Explicit when hasExistingAuth && !request.HasPrompt(Prompts.Consent): {
+      case ConsentTypes.Explicit when hasExistingAuth && !request.HasPromptValue(PromptValues.Consent): {
          var identity = await CreateClaimsIdentity(request, userId, authorization, application, controller);
 
          return controller.SignIn(new(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
       }
       // At this point, no authorization was found in the database and an error must be returned
       // if the client application specified prompt=none in the authorization request.
-      case ConsentTypes.Explicit   when request.HasPrompt(Prompts.None):
-      case ConsentTypes.Systematic when request.HasPrompt(Prompts.None):
+      case ConsentTypes.Explicit   when request.HasPromptValue(PromptValues.None):
+      case ConsentTypes.Systematic when request.HasPromptValue(PromptValues.None):
          return controller.ForbidOpenIddict(Errors.ConsentRequired, "Interactive user consent is required.");
       case { } when hasConsent:
          return controller.ForbidOpenIddict(Errors.RequestNotSupported, "Detected loop in consent");

@@ -7,14 +7,15 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>preview</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>$(NoWarn);CS1591;NU5118;NU5128;xUnit2002</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;NETSDK1206;NU5118;NU5128;xUnit2002</NoWarn>
     <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <NuGetAuditMode>direct</NuGetAuditMode>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <CodeAnalysisRuleset>$(MSBuildThisFileDirectory)eng\CodeAnalysis.ruleset</CodeAnalysisRuleset>
+    <SuppressSymbolPackageFormatValidation>true</SuppressSymbolPackageFormatValidation>
     <EnableXlfLocalization>false</EnableXlfLocalization>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
@@ -28,36 +29,64 @@
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
     <PublicSign>false</PublicSign>
-	<PublicKey>0024000004800000940000000602000000240000525341310004000001000100c584821b0b1097b0829c64856f6a64574a7017f11fce2e7a2c727abca39f973d8602ebb4283d1fe454de079e6bea515e77cee702f49ddf6272be395b94790805b1e3870916334195f4708210edd16232e70080a79fbd4c848191a20083e43709d76f03e2390b5a123c14e12797b67bf63df5770ef89c0cc06b6ee95057b5c4af</PublicKey>
+    <PublicKey>0024000004800000940000000602000000240000525341310004000001000100c584821b0b1097b0829c64856f6a64574a7017f11fce2e7a2c727abca39f973d8602ebb4283d1fe454de079e6bea515e77cee702f49ddf6272be395b94790805b1e3870916334195f4708210edd16232e70080a79fbd4c848191a20083e43709d76f03e2390b5a123c14e12797b67bf63df5770ef89c0cc06b6ee95057b5c4af</PublicKey>
 	<PublicKeyToken>0e903ac20289ddb8</PublicKeyToken>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NetFrameworkTargetFrameworks Condition=" '$(NetFrameworkTargetFrameworks)' == '' ">
-      net461;
-      net472;
-      net48
-    </NetFrameworkTargetFrameworks>
+    <!--
+      Note: targeting Android requires installing the .NET Android workload. To ensure the solution can
+      be built on machines that don't have the Android workload installed, a directory check is used to
+      ensure the Android reference assemblies pack is present on the machine before targeting Android.
+    -->
+    <SupportsAndroidTargeting
+      Condition=" '$(SupportsAndroidTargeting)' == '' And
+                  ($([System.OperatingSystem]::IsMacOS()) Or $([System.OperatingSystem]::IsWindows())) And
+                 ('$(GITHUB_ACTIONS)' == 'true' Or ('$(DotNetRoot)'         != ''     And Exists('$(DotNetRoot)packs\Microsoft.Android.Ref.34')) Or
+                                                   ('$(DOTNET_HOST_PATH)'   != ''     And Exists('$([System.IO.Path]::GetDirectoryName($(DOTNET_HOST_PATH)))\packs\Microsoft.Android.Ref.34')) Or
+                                                   ('$(MSBuildRuntimeType)' != 'Core' And Exists('$(ProgramFiles)\dotnet\packs\Microsoft.Android.Ref.34'))) ">true</SupportsAndroidTargeting>
 
-    <NetCoreTargetFrameworks Condition=" '$(NetCoreTargetFrameworks)' == '' ">
-      net6.0;
-      net7.0;
-      net8.0
-    </NetCoreTargetFrameworks>
+    <!--
+      Note: targeting iOS requires installing the .NET iOS workload. To ensure the solution can be
+      built on machines that don't have the iOS workload installed, a directory check is used to
+      ensure the iOS reference assemblies pack is present on the machine before targeting iOS.
+    -->
+    <SupportsIOSTargeting
+      Condition=" '$(SupportsIOSTargeting)' == '' And
+                  ($([System.OperatingSystem]::IsMacOS()) Or $([System.OperatingSystem]::IsWindows())) And
+                 ('$(GITHUB_ACTIONS)' == 'true' Or ('$(DotNetRoot)'         != ''     And Exists('$(DotNetRoot)packs\Microsoft.iOS.Ref')) Or
+                                                   ('$(DOTNET_HOST_PATH)'   != ''     And Exists('$([System.IO.Path]::GetDirectoryName($(DOTNET_HOST_PATH)))\packs\Microsoft.iOS.Ref')) Or
+                                                   ('$(MSBuildRuntimeType)' != 'Core' And Exists('$(ProgramFiles)\dotnet\packs\Microsoft.iOS.Ref'))) ">true</SupportsIOSTargeting>
+    <!--
+      Note: targeting Mac Catalyst requires installing the .NET Mac Catalyst workload. To ensure the solution
+      can be built on machines that don't have the Mac Catalyst workload installed, a directory check is used to
+      ensure the Mac Catalyst reference assemblies pack is present on the machine before targeting Mac Catalyst.
+    -->
+    <SupportsMacCatalystTargeting
+      Condition=" '$(SupportsMacCatalystTargeting)' == '' And
+                  ($([System.OperatingSystem]::IsMacOS()) Or $([System.OperatingSystem]::IsWindows())) And
+                 ('$(GITHUB_ACTIONS)' == 'true' Or ('$(DotNetRoot)'         != ''     And Exists('$(DotNetRoot)packs\Microsoft.MacCatalyst.Ref')) Or
+                                                   ('$(DOTNET_HOST_PATH)'   != ''     And Exists('$([System.IO.Path]::GetDirectoryName($(DOTNET_HOST_PATH)))\packs\Microsoft.MacCatalyst.Ref')) Or
+                                                   ('$(MSBuildRuntimeType)' != 'Core' And Exists('$(ProgramFiles)\dotnet\packs\Microsoft.MacCatalyst.Ref'))) ">true</SupportsMacCatalystTargeting>
+    <!--
+      Note: targeting macOS requires installing the .NET macOS workload. To ensure the solution can be
+      built on machines that don't have the macOS workload installed, a directory check is used to
+      ensure the macOS reference assemblies pack is present on the machine before targeting macOS.
+    -->
+    <SupportsMacOSTargeting
+      Condition=" '$(SupportsMacOSTargeting)' == '' And
+                  ($([System.OperatingSystem]::IsMacOS()) Or $([System.OperatingSystem]::IsWindows())) And
+                 ('$(GITHUB_ACTIONS)' == 'true' Or ('$(DotNetRoot)'         != ''     And Exists('$(DotNetRoot)packs\Microsoft.macOS.Ref')) Or
+                                                   ('$(DOTNET_HOST_PATH)'   != ''     And Exists('$([System.IO.Path]::GetDirectoryName($(DOTNET_HOST_PATH)))\packs\Microsoft.macOS.Ref')) Or
+                                                   ('$(MSBuildRuntimeType)' != 'Core' And Exists('$(ProgramFiles)\dotnet\packs\Microsoft.macOS.Ref'))) ">true</SupportsMacOSTargeting>
 
-    <NetCoreWindowsTargetFrameworks Condition=" '$(NetCoreWindowsTargetFrameworks)' == '' ">
-      net6.0-windows7.0;
-      net6.0-windows10.0.17763;
-      net7.0-windows7.0;
-      net7.0-windows10.0.17763;
-      net8.0-windows7.0;
-      net8.0-windows10.0.17763
-    </NetCoreWindowsTargetFrameworks>
-
-    <NetStandardTargetFrameworks Condition=" '$(NetStandardTargetFrameworks)' == '' ">
-      netstandard2.0;
-      netstandard2.1
-    </NetStandardTargetFrameworks>
+    <!--
+      Note: while <EnableWindowsTargeting>true</EnableWindowsTargeting> can be used to force targeting
+      Windows on non-Windows platforms, Windows-specific targets are only used when running on Windows
+      to speed up the build on non-Windows platforms.
+    -->
+    <SupportsWindowsTargeting
+      Condition=" '$(SupportsWindowsTargeting)' == '' And $([System.OperatingSystem]::IsWindows()) ">true</SupportsWindowsTargeting>
 
     <!--
       Note: the .NET Core 5.0 reference assemblies or UWP contract assemblies may not be available if
@@ -65,10 +94,60 @@
       can be built on machines that don't have the UWP tooling installed, directory checks are used to
       ensure the reference and contract assemblies are present on the machine before targeting uap10.0.
     -->
-    <UniversalWindowsPlatformTargetFrameworks
-      Condition=" '$(UniversalWindowsPlatformTargetFrameworks)' == '' And $([MSBuild]::IsOSPlatform('Windows')) And
+    <SupportsUniversalWindowsPlatformTargeting
+      Condition=" '$(SupportsUniversalWindowsPlatformTargeting)' == '' And $([System.OperatingSystem]::IsWindows()) And
                  ('$(GITHUB_ACTIONS)' == 'true' Or (Exists('$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v5.0') And
-                                                    Exists('$(MSBuildProgramFiles32)\Windows Kits\10\References\10.0.17763.0'))) ">
+                                                    Exists('$(MSBuildProgramFiles32)\Windows Kits\10\References\10.0.17763.0'))) ">true</SupportsUniversalWindowsPlatformTargeting>
+
+    <NetFrameworkTargetFrameworks Condition=" '$(NetFrameworkTargetFrameworks)' == '' ">
+      net48
+    </NetFrameworkTargetFrameworks>
+
+    <NetCoreTargetFrameworks Condition=" '$(NetCoreTargetFrameworks)' == '' ">
+      net9.0
+    </NetCoreTargetFrameworks>
+
+    <NetCoreAndroidTargetFrameworks
+      Condition=" '$(NetCoreAndroidTargetFrameworks)' == '' And '$(SupportsAndroidTargeting)' == 'true' ">
+      net8.0-android34.0;
+      net9.0-android35.0
+    </NetCoreAndroidTargetFrameworks>
+
+    <NetCoreIOSTargetFrameworks
+      Condition=" '$(NetCoreIOSTargetFrameworks)' == '' And '$(SupportsIOSTargeting)' == 'true' ">
+      net8.0-ios18.0;
+      net9.0-ios18.0
+    </NetCoreIOSTargetFrameworks>
+
+    <NetCoreMacCatalystTargetFrameworks
+      Condition=" '$(NetCoreMacCatalystTargetFrameworks)' == '' And '$(SupportsMacCatalystTargeting)' == 'true' ">
+      net8.0-maccatalyst18.0;
+      net9.0-maccatalyst18.0
+    </NetCoreMacCatalystTargetFrameworks>
+
+    <NetCoreMacOSTargetFrameworks
+      Condition=" '$(NetCoreMacOSTargetFrameworks)' == '' And '$(SupportsMacOSTargeting)' == 'true' ">
+      net8.0-macos15.0;
+      net9.0-macos15.0
+    </NetCoreMacOSTargetFrameworks>
+
+    <NetCoreWindowsTargetFrameworks
+      Condition=" '$(NetCoreWindowsTargetFrameworks)' == '' And '$(SupportsWindowsTargeting)' == 'true' ">
+      net6.0-windows7.0;
+      net6.0-windows10.0.17763;
+      net8.0-windows7.0;
+      net8.0-windows10.0.17763;
+      net9.0-windows7.0;
+      net9.0-windows10.0.17763
+    </NetCoreWindowsTargetFrameworks>
+
+    <NetStandardTargetFrameworks Condition=" '$(NetStandardTargetFrameworks)' == '' ">
+      netstandard2.0;
+      netstandard2.1
+    </NetStandardTargetFrameworks>
+
+    <UniversalWindowsPlatformTargetFrameworks
+      Condition=" '$(UniversalWindowsPlatformTargetFrameworks)' == '' And '$(SupportsUniversalWindowsPlatformTargeting)' == 'true' ">
       uap10.0.17763
     </UniversalWindowsPlatformTargetFrameworks>
   </PropertyGroup>
@@ -101,6 +180,15 @@
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' == 'true' And '$(GITHUB_REF.StartsWith(`refs/pull/`))' == 'false' ">
     <OfficialBuild>true</OfficialBuild>
     <OfficialBuildId>$(_ComputedOfficialBuildId)</OfficialBuildId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(RepoRelativeProjectDir.Contains('sandbox')) ">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IsPackable>false</IsPackable>
+    <IsShipping>false</IsShipping>
+    <Serviceable>false</Serviceable>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(RepoRelativeProjectDir.Contains('src')) ">

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 
 namespace Openiddict.Contrib.Server.ControllerHelpers;
@@ -24,16 +25,16 @@ public static class AuthorizationCodeHelpers
       //  - If prompt=login was specified by the client application.
       //  - If a max_age parameter was provided and the authentication cookie is not considered "fresh" enough.
       if (result is {Succeeded: true}       &&
-          !request.HasPrompt(Prompts.Login) &&
+          !request.HasPromptValue(PromptValues.Login) &&
           (request.MaxAge == null || result.Properties?.IssuedUtc == null || !(DateTimeOffset.UtcNow - result.Properties.IssuedUtc > TimeSpan.FromSeconds(request.MaxAge.Value))))
          return null;
-      // If the client application requested promptless authentication, return an error indicating that the user is not logged in.
-      if (request.HasPrompt(Prompts.None))
+        // If the client application requested promptless authentication, return an error indicating that the user is not logged in.
+      if (request.HasPromptValue(PromptValues.None))
          return controller.ForbidOpenIddict(Errors.LoginRequired, "The user is not logged in.");
 
       // To avoid endless login -> authorization redirects, the prompt=login flag
       // is removed from the authorization request payload before redirecting the user.
-      var prompt = new StringValues(request.GetPrompts().Where(x => x != Prompts.Login).ToArray());
+      var prompt = new StringValues(request.GetPromptValues().Where(x => x != PromptValues.Login).ToArray());
 
       var httpRequest = controller.Request;
       var parameters = httpRequest.HasFormContentType
